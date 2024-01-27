@@ -1,9 +1,15 @@
 import React from "react";
 import Modal from "./Modal";
-import { Field, Form, Formik } from "formik";
+import { ErrorMessage, Field, Form, Formik } from "formik";
 import { db } from "../config/firebase";
 import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
+import * as Yup from "yup";
+
+const contactSchemaValidation = Yup.object().shape({
+  name: Yup.string().required("Name is Required"),
+  email: Yup.string().email("Invalid Email").required("Email is Required"),
+});
 
 const ModifyData = ({ isOpen, onClose, isUpdate, contact }) => {
   const handleSubmit = async (values) => {
@@ -27,6 +33,7 @@ const ModifyData = ({ isOpen, onClose, isUpdate, contact }) => {
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
         <Formik
+          validationSchema={contactSchemaValidation}
           initialValues={{
             name: isUpdate ? contact.name : "",
             email: isUpdate ? contact.email : "",
@@ -43,6 +50,9 @@ const ModifyData = ({ isOpen, onClose, isUpdate, contact }) => {
                 placeholder="Enter Your Name"
                 className="border-[1px] py-2 px-3 rounded-md outline-none border-[#00000048]"
               />
+              <p className="text-sm text-red-500 mt-[-4px]">
+                <ErrorMessage name="name" />
+              </p>
             </div>
             <div className="flex flex-col gap-[2px]">
               <label htmlFor="email" className="text-sm opacity-90">
@@ -53,6 +63,9 @@ const ModifyData = ({ isOpen, onClose, isUpdate, contact }) => {
                 name="email"
                 className="border-[1px] py-2 px-3 rounded-md outline-none border-[#00000048]"
               />
+              <p className="text-sm text-red-500 mt-[-4px]">
+                <ErrorMessage name="email" />
+              </p>
             </div>
             <button
               type="submit"

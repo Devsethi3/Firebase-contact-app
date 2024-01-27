@@ -8,6 +8,7 @@ import ContactCard from "./components/ContactCard";
 import ModifyData from "./components/ModifyData";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import NotFound from "./components/NotFound";
 
 const App = () => {
   const [contacts, setContacts] = useState([]);
@@ -18,6 +19,26 @@ const App = () => {
   };
   const onClose = () => {
     setOpen(false);
+  };
+
+  const searchContacts = (e) => {
+    const value = e.target.value;
+
+    const contactRef = collection(db, "contacts");
+
+    onSnapshot(contactRef, (snapshot) => {
+      const contactList = snapshot.docs.map((doc) => {
+        return {
+          id: doc.id,
+          ...doc.data(),
+        };
+      });
+      const filterContacts = contactList.filter((contact) =>
+        contact.name.toLowerCase().includes(value.toLowerCase())
+      );
+      setContacts(filterContacts);
+      return filterContacts;
+    });
   };
 
   useEffect(() => {
@@ -48,6 +69,7 @@ const App = () => {
       <div className="mt-[1rem] gap-2 relative flex items-center">
         <FiSearch className="text-[#ffffff88] text-xl left-3 absolute" />
         <input
+          onChange={searchContacts}
           type="text"
           className="px-3 pl-10 py-[8px] rounded-md w-full outline-none bg-transparent border-2 border-[#ffffff40]"
           placeholder="Search Contact Here..."
@@ -58,9 +80,13 @@ const App = () => {
         />
       </div>
       <div className="mt-[1rem]">
-        {contacts.map((contact) => {
-          return <ContactCard key={contact.id} contact={contact} />;
-        })}
+        {contacts.length <= 0 ? (
+          <NotFound />
+        ) : (
+          contacts.map((contact) => (
+            <ContactCard key={contact.id} contact={contact} />
+          ))
+        )}
       </div>
       <ModifyData isOpen={isOpen} onClose={onClose} />
       <ToastContainer position="bottom-center" />

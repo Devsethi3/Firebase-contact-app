@@ -7,7 +7,7 @@ const Modal = ({ onClose, isOpen, children }) => {
     <>
       {isOpen && (
         <>
-          <div className="absolute shadow-lg shadow-[#0000003f] w-[400px] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 h-[300px] rounded-md bg-[#ffffffee] text-black p-4">
+          <div className="absolute shadow-lg shadow-[#0000003f] w-[400px] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 modal rounded-md bg-[#ffffffee] text-black p-4">
             <div className="flex justify-end">
               <AiOutlineClose
                 onClick={onClose}

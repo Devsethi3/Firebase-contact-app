@@ -26,6 +26,9 @@ body::-webkit-scrollbar{
   background: #ffffff13;
   padding: 1.5rem;
 }
+.modal{
+  min-height: 300px;
+}
 @media screen and (max-width: 440px) {
   .container{
     width: 100%;
