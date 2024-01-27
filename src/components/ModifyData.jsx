@@ -2,29 +2,36 @@ import React from "react";
 import Modal from "./Modal";
 import { Field, Form, Formik } from "formik";
 import { db } from "../config/firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { toast } from "react-toastify";
 
-const ModifyData = ({ isOpen, onClose }) => {
-  const addContact = async (contact) => {
+const ModifyData = ({ isOpen, onClose, isUpdate, contact }) => {
+  const handleSubmit = async (values) => {
     try {
-      const contactRef = collection(db, "contacts");
-      await addDoc(contactRef, contact);
-      onClose(); // Close the modal after successfully adding a contact
+      if (isUpdate) {
+        const contactRef = doc(db, "contacts", contact.id);
+        await updateDoc(contactRef, values);
+        toast.success("Contact Updated Successfully");
+      } else {
+        const contactRef = collection(db, "contacts");
+        await addDoc(contactRef, values);
+        toast.success("Contact Added Successfully");
+      }
+      onClose(); // Close the modal after successfully adding or updating a contact
     } catch (error) {
       console.log("Something went wrong", error);
     }
   };
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
         <Formik
           initialValues={{
-            name: "",
-            email: "",
+            name: isUpdate ? contact.name : "",
+            email: isUpdate ? contact.email : "",
           }}
-          onSubmit={(values) => {
-            addContact(values);
-          }}
+          onSubmit={handleSubmit}
         >
           <Form>
             <div className="flex mb-5 flex-col gap-[2px]">
@@ -49,11 +56,10 @@ const ModifyData = ({ isOpen, onClose }) => {
             </div>
             <button
               type="submit"
-              // onClick={onClose}
               className="w-full flex items-center justify-center gap-2 text-white h-[2.8rem] rounded-md mt-[2rem] bg-[#822fbe]"
             >
               <span className="text-3xl">+</span>
-              Add Contact
+              {isUpdate ? "Update" : "Add"} Contact
             </button>
           </Form>
         </Formik>

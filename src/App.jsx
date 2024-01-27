@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import { FiSearch } from "react-icons/fi";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from "./config/firebase";
 import ContactCard from "./components/ContactCard";
-import Modal from "./components/Modal";
 import ModifyData from "./components/ModifyData";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   const [contacts, setContacts] = useState([]);
@@ -23,14 +24,17 @@ const App = () => {
     const getContacts = async () => {
       try {
         const contactRef = collection(db, "contacts");
-        const contactSnapShot = await getDocs(contactRef);
-        const contactList = contactSnapShot.docs.map((doc) => {
-          return {
-            id: doc.id,
-            ...doc.data(),
-          };
+        // const contactSnapShot = await getDocs(contactRef);
+        onSnapshot(contactRef, (snapshot) => {
+          const contactList = snapshot.docs.map((doc) => {
+            return {
+              id: doc.id,
+              ...doc.data(),
+            };
+          });
+          setContacts(contactList);
+          return contactList;
         });
-        setContacts(contactList);
       } catch (error) {
         console.log("Something went wrong", error);
       }
@@ -46,7 +50,7 @@ const App = () => {
         <input
           type="text"
           className="px-3 pl-10 py-[8px] rounded-md w-full outline-none bg-transparent border-2 border-[#ffffff40]"
-          placeholder="Enter Email..."
+          placeholder="Search Contact Here..."
         />
         <AiFillPlusCircle
           onClick={onOpen}
@@ -59,6 +63,7 @@ const App = () => {
         })}
       </div>
       <ModifyData isOpen={isOpen} onClose={onClose} />
+      <ToastContainer position="bottom-center" />
     </div>
   );
 };
