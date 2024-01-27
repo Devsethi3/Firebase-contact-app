@@ -34,5 +34,28 @@ body::-webkit-scrollbar{
     width: 100%;
     min-height: 100vh;
     margin: 0;
+    padding: 1rem;
+  }
+  .contact-wrapper{
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .modal{
+    width: 320px;
+  }
+  .contact{
+    padding-right: 20px;
+    border: none;
+  }
+  .icon{
+    font-size: 1.2rem;
+  }
+  .user-img{
+    width: 30px;
+  }
+}
+@media screen and (max-width: 340px){
+  .heading{
+    font-size: 1rem;
   }
 }
